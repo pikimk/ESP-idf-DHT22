@@ -16,8 +16,25 @@
             }; 
 
              vTaskDelay(1000/ portTICK_PERIOD_MS); // delay for sensor to reset, at least 400ms
+            
          }
         
+    }
+
+    void tempStatic(void* param){
+        //use static method from class to read specific pin
+        float temp;
+        float hum;
+        while(1){
+             if(DHT22::getDataFromPin(GPIO_NUM_17,temp,hum) > 0){
+            //read succsess
+            ESP_LOGW("SNS","Temp: %.1f Hum: %.1f ",temp,hum);
+        }else{
+            ESP_LOGW("SNS","Static sensor error");
+        };
+        vTaskDelay(500/ portTICK_PERIOD_MS);
+        }
+       
     }
 
 
@@ -26,6 +43,8 @@ extern "C"{
     void app_main() {
 
         xTaskCreate(&temperatureSensor,"TEMP_TASK", 2048 ,NULL,5,NULL);
+        xTaskCreate(&tempStatic,"STATIC-METHOD",2048,NULL,5,NULL);
+        
 
     }
 

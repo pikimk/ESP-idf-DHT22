@@ -16,7 +16,7 @@ class DHT22 {
     
     public:
         DHT22(gpio_num_t pin){
-            this->pin = pin;
+            this->pin= pin;
             data[0] = data[1] = data[2] = data[3] = data[4] = 0; // set all bits zero
 
             gpio_intr_disable(pin);
@@ -137,6 +137,21 @@ class DHT22 {
         float getTemperature(){
             return temperature;
         };
+
+        static int8_t getDataFromPin(gpio_num_t pin, float &temp, float& hum){
+           DHT22 *sensor = new DHT22(pin);
+           int8_t status = sensor->readSensor();
+           if(status > 0){
+            temp = sensor->getTemperature();
+            hum = sensor->getHumidity();
+           }else{
+            temp = NULL;
+            hum = NULL;
+           };
+           delete sensor;
+           return status;
+
+        }
    
 
 };
